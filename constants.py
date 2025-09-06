@@ -1,3 +1,6 @@
+import json
+import os
+
 # Constants
 WINDOW_WIDTH = 600
 WINDOW_HEIGHT = 780
@@ -21,3 +24,6 @@ FPS = 60
 
 # Scoring
 LINE_SCORES = {0: 0, 1: 100, 2: 300, 3: 500, 4: 800}
+
+HIGH_SCORES_FILE = "tetris_highscores.json"
+MAX_HIGH_SCORES = 10
