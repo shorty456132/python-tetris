@@ -182,7 +182,3 @@ class TetrisGame:
 
         pygame.quit()
         sys.exit()
-
-# if __name__ == "__main__":
-#     game = TetrisGame() # Instanciate the TetrisGame class
-#     game.run() # Run the game loop
