@@ -5,6 +5,12 @@ def main():
     """Initialize and run the Tetris game"""
     try:
         game = TetrisGame()
+
+        # Show high scores before starting
+        print("Welcome to python learing Tetris!")
+        game.high_score_manager.display_high_scores()
+        print("Use arrow keys to play. Good luck!\n")
+        
         game.run()
     except KeyboardInterrupt:
         print("\nGame interiupted by user")

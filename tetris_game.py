@@ -3,6 +3,7 @@ import sys
 import random
 from constants import WINDOW_WIDTH, WINDOW_HEIGHT, GRID_SIZE, COLORS, FALL_SPEED, LINE_SCORES
 from tetromino import Tetromino 
+from high_scores import HighScoreManager
 
 
 
@@ -29,6 +30,8 @@ class TetrisGame:
         self.score = 0
         self.lines_cleared_total = 0
 
+        self.high_score_manager = HighScoreManager()
+
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -50,7 +53,7 @@ class TetrisGame:
         current_time = pygame.time.get_ticks()
         if current_time - self.fall_time > self.fall_speed:
             if not self.current_piece.move(0, 1, self.grid): # Move piece down
-                print("Piece Landed")
+                # print("Piece Landed")
                 self.lock_piece()
                 
                 # Clear any full lines and update score
@@ -62,11 +65,31 @@ class TetrisGame:
                 # Create new piece
                 self.current_piece = self.create_new_piece()
 
+                # Check game over
                 if not self.current_piece.is_valid_position(self.grid, 0, 0):
                     # print("GAME OVER!")
-                    self.running = False
+                    self.game_over()
+
+
             self.fall_time = current_time
-        
+    
+    def game_over(self):
+        """handle game over logic"""
+        print(f"\nGame Over! Final Score: {self.score}")
+        print(f"Lines Cleared: {self.lines_cleared_total}")
+
+        # Check for high score
+        if self.high_score_manager.is_high_score(self.score):
+            print("NEW HIGH SCORE!")
+            made_list = self.high_score_manager.add_score(self.score, self.lines_cleared_total)
+            if made_list:
+                print("Your score has been saved!")
+
+        # Display current high scores
+        self.high_score_manager.display_high_scores()
+
+        self.running = False
+
     def draw(self):
         self.screen.fill(COLORS['BLACK'])
 
@@ -130,14 +153,11 @@ class TetrisGame:
                 filled_cells += 1
 
         is_full = filled_cells == len(self.grid[row])
-        print(f"Row {row}: {filled_cells}/{len(self.grid[row])} filled, Full: {is_full}")  # Debug
         return is_full
 
     def clear_lines(self):
         """Remove full lines and drop remaining lines down"""
         lines_cleared = 0
-
-        print("Checking for full lines...") # Debug
 
         full_lines_found = True
         while full_lines_found:
@@ -157,7 +177,6 @@ class TetrisGame:
                     full_lines_found = True # use this a flag to check again
                     break #start over from the bottom
         
-        print(f"Total lines cleared this time: {lines_cleared}") # Debug
         return lines_cleared 
 
     def lock_piece(self):
